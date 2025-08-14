@@ -2,6 +2,8 @@ const chai = require('chai');
 const assert = chai.assert;
 
 const Solver = require('../controllers/sudoku-solver.js');
+const puzzleStrings = require('../controllers/puzzle-strings.js').puzzlesAndSolutions;
+
 let solver;
 
 suite('Unit Tests', () => {
@@ -9,14 +11,10 @@ suite('Unit Tests', () => {
     solver = new Solver();
   });
 
-  const validPuzzle =
-    '1.5..2.84..63.12.7.2..5.....9..1....8.2.3674.3.7.2..9....5.9....1.9.4.7.4.4.3..6';
-  const invalidCharPuzzle =
-    '1.5..2.84..63.12.7.2..5.....9..1....8.2.3674.3.7.2..9....5.9....1.9.4.7.4.4.3..X';
-  const shortPuzzle =
-    '1.5..2.84..63.12.7.2..5.....9..1....8.2.3674.3.7.2..9....5.9';
-  const solvedPuzzle =
-    '135762984946381257728459613694517832812936745357824196473298561581673429269145378';
+  const validPuzzle = puzzleStrings[0][0];
+  const solvedPuzzle = puzzleStrings[0][1];
+  const invalidCharPuzzle = validPuzzle.slice(0, -1) + 'X';
+  const shortPuzzle = validPuzzle.slice(0, 60);
 
   test('Logic handles a valid puzzle string of 81 characters', () => {
     assert.isTrue(solver.validate(validPuzzle).valid);
@@ -71,5 +69,14 @@ suite('Unit Tests', () => {
   test('Solver returns the expected solution for an incomplete puzzle', () => {
     const result = solver.solve(validPuzzle);
     assert.equal(result.solution, solvedPuzzle);
+  });
+
+  // Additional test for all puzzles in puzzle-strings.js
+  test('Solver correctly solves all sample puzzles from puzzle-strings.js', () => {
+    puzzleStrings.forEach(([puzzle, solution], index) => {
+      const result = solver.solve(puzzle);
+      assert.isTrue(result.valid, `Puzzle ${index + 1} should be valid`);
+      assert.equal(result.solution, solution, `Puzzle ${index + 1} solution should match expected`);
+    });
   });
 });

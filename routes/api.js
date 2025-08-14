@@ -35,7 +35,7 @@ module.exports = function (app) {
     const rowIndex = solver.rowLetterToIndex(row);
     const colIndex = Number(column) - 1;
 
-    // ✅ Requirement #9: If value already exists at that coordinate, it's valid
+    // If value already exists at that coordinate, it's valid
     if (board[rowIndex][colIndex] === value) {
       return res.json({ valid: true });
     }

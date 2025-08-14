@@ -1,21 +1,17 @@
-const chai = require("chai");
+const chai = require('chai');
 const chaiHttp = require('chai-http');
 const assert = chai.assert;
 const server = require('../server');
+const puzzleStrings = require('../controllers/puzzle-strings.js').puzzlesAndSolutions;
 
 chai.use(chaiHttp);
 
 suite('Functional Tests', () => {
-  const validPuzzle =
-    '1.5..2.84..63.12.7.2..5.....9..1....8.2.3674.3.7.2..9....5.9....1.9.4.7.4.4.3..6';
-  const solvedPuzzle =
-    '135762984946381257728459613694517832812936745357824196473298561581673429269145378';
-  const invalidCharPuzzle =
-    '1.5..2.84..63.12.7.2..5.....9..1....8.2.3674.3.7.2..9....5.9....1.9.4.7.4.4.3..X';
-  const shortPuzzle =
-    '1.5..2.84..63.12.7.2..5.....9..1....8.2.3674.3.7.2..9....5.9';
-  const unsolvablePuzzle =
-    '999..2.84..63.12.7.2..5.....9..1....8.2.3674.3.7.2..9....5.9....1.9.4.7.4.4.3..6';
+  const validPuzzle = puzzleStrings[0][0];
+  const solvedPuzzle = puzzleStrings[0][1];
+  const invalidCharPuzzle = validPuzzle.slice(0, -1) + 'X';
+  const shortPuzzle = validPuzzle.slice(0, 60);
+  const unsolvablePuzzle = '999' + validPuzzle.slice(3); // Modified to be unsolvable
 
   // --- /api/solve ---
   test('Solve a puzzle with valid puzzle string: POST request to /api/solve', function (done) {
@@ -190,5 +186,24 @@ suite('Functional Tests', () => {
         assert.deepEqual(res.body, { error: 'Invalid value' });
         done();
       });
+  });
+
+  // Additional test for all puzzles in puzzle-strings.js
+  test('Solve all sample puzzles from puzzle-strings.js: POST request to /api/solve', function (done) {
+    let completed = 0;
+    const total = puzzleStrings.length;
+    puzzleStrings.forEach(([puzzle, solution], index) => {
+      chai
+        .request(server)
+        .post('/api/solve')
+        .send({ puzzle })
+        .end((err, res) => {
+          assert.equal(res.status, 200, `Puzzle ${index + 1} should return status 200`);
+          assert.property(res.body, 'solution', `Puzzle ${index + 1} should return a solution`);
+          assert.equal(res.body.solution, solution, `Puzzle ${index + 1} solution should match expected`);
+          completed++;
+          if (completed === total) done();
+        });
+    });
   });
 });
