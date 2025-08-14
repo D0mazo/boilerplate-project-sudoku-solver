@@ -7,11 +7,16 @@ module.exports = function (app) {
 
   app.route('/api/check').post((req, res) => {
     const { puzzle, coordinate, value } = req.body;
-    console.log(`Received: coordinate=${coordinate}, value=${value}, row=${coordinate[0]}, column=${coordinate[1]}, colIndex=${Number(coordinate[1]) - 1}`);
 
+    // ✅ Check required fields first
     if (!puzzle || !coordinate || !value) {
       return res.json({ error: 'Required field(s) missing' });
     }
+
+    // Now it's safe to log
+    console.log(
+      `Received: coordinate=${coordinate}, value=${value}, row=${coordinate[0]}, column=${coordinate[1]}, colIndex=${Number(coordinate[1]) - 1}`
+    );
 
     const validCheck = solver.validate(puzzle);
     if (!validCheck.valid) {
