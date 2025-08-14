@@ -1,7 +1,6 @@
 'use strict';
 
 class SudokuSolver {
-  // Validate puzzle string: length 81, only digits or '.'
   validate(puzzleString) {
     if (!puzzleString) {
       return { valid: false, error: 'Required field missing' };
@@ -15,31 +14,28 @@ class SudokuSolver {
     return { valid: true };
   }
 
-  // Helpers to translate row letters to index
   rowLetterToIndex(row) {
-    return row.toUpperCase().charCodeAt(0) - 65; // 'A' -> 0, 'B' -> 1 ...
+    return row.toUpperCase().charCodeAt(0) - 65;
   }
 
   checkRowPlacement(puzzleString, row, column, value) {
-    const rowIndex = this.rowLetterToIndex(row);
     const board = this.stringToBoard(puzzleString);
-    const rowVals = board[rowIndex];
-    return !rowVals.includes(value);
+    return !board[this.rowLetterToIndex(row)].includes(value);
   }
 
   checkColPlacement(puzzleString, row, column, value) {
-    const colIndex = Number(column) - 1;
     const board = this.stringToBoard(puzzleString);
-    for (let i = 0; i < 9; i++) {
-      if (board[i][colIndex] === value) return false;
+    const colIndex = Number(column) - 1;
+    for (let r = 0; r < 9; r++) {
+      if (board[r][colIndex] === value) return false;
     }
     return true;
   }
 
   checkRegionPlacement(puzzleString, row, column, value) {
+    const board = this.stringToBoard(puzzleString);
     const rowIndex = this.rowLetterToIndex(row);
     const colIndex = Number(column) - 1;
-    const board = this.stringToBoard(puzzleString);
 
     const startRow = Math.floor(rowIndex / 3) * 3;
     const startCol = Math.floor(colIndex / 3) * 3;
@@ -83,31 +79,26 @@ class SudokuSolver {
         if (board[r][c] === '.') {
           for (let num = 1; num <= 9; num++) {
             const val = String(num);
-            if (
-              this.isSafe(board, r, c, val)
-            ) {
+            if (this.isSafe(board, r, c, val)) {
               board[r][c] = val;
-              if (this.solveBoard(board)) {
-                return true;
-              }
+              if (this.solveBoard(board)) return true;
               board[r][c] = '.';
             }
           }
-          return false; // no valid number found
+          return false;
         }
       }
     }
-    return true; // solved
+    return true;
   }
 
   isSafe(board, row, col, value) {
-    // Row check
     if (board[row].includes(value)) return false;
-    // Column check
+
     for (let r = 0; r < 9; r++) {
       if (board[r][col] === value) return false;
     }
-    // Region check
+
     const startRow = Math.floor(row / 3) * 3;
     const startCol = Math.floor(col / 3) * 3;
     for (let r = startRow; r < startRow + 3; r++) {
@@ -115,6 +106,7 @@ class SudokuSolver {
         if (board[r][c] === value) return false;
       }
     }
+
     return true;
   }
 }
