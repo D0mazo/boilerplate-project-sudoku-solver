@@ -8,23 +8,19 @@ module.exports = function (app) {
   app.route('/api/check').post((req, res) => {
     const { puzzle, coordinate, value } = req.body;
 
-    // Required fields check
     if (!puzzle || !coordinate || !value) {
       return res.json({ error: 'Required field(s) missing' });
     }
 
-    // Puzzle validation
     const validCheck = solver.validate(puzzle);
     if (!validCheck.valid) {
       return res.json({ error: validCheck.error });
     }
 
-    // Coordinate validation
     if (!/^[A-I][1-9]$/.test(coordinate)) {
       return res.json({ error: 'Invalid coordinate' });
     }
 
-    // Value validation
     if (!/^[1-9]$/.test(value)) {
       return res.json({ error: 'Invalid value' });
     }
@@ -35,7 +31,6 @@ module.exports = function (app) {
     const rowIndex = solver.rowLetterToIndex(row);
     const colIndex = Number(column) - 1;
 
-    // If value already exists at that coordinate, it's valid
     if (board[rowIndex][colIndex] === value) {
       return res.json({ valid: true });
     }

@@ -40,9 +40,8 @@ class SudokuSolver {
   checkColPlacement(puzzleString, row, column, value) {
     const colIndex = Number(column) - 1;
     const board = this.stringToBoard(puzzleString);
-    const rowIndex = this.rowLetterToIndex(row);
     for (let i = 0; i < 9; i++) {
-      if (i !== rowIndex && board[i][colIndex] === value) return false;
+      if (board[i][colIndex] === value) return false;
     }
     return true;
   }
@@ -55,8 +54,8 @@ class SudokuSolver {
     const startCol = Math.floor(colIndex / 3) * 3;
     for (let r = startRow; r < startRow + 3; r++) {
       for (let c = startCol; c < startCol + 3; c++) {
-        if (!(r === rowIndex && c === colIndex) && board[r][c] === value) {
-          return false;
+        if (r !== rowIndex || c !== colIndex) {
+          if (board[r][c] === value) return false;
         }
       }
     }

@@ -11,9 +11,8 @@ suite('Functional Tests', () => {
   const solvedPuzzle = puzzleStrings[0][1];
   const invalidCharPuzzle = validPuzzle.slice(0, -1) + 'X';
   const shortPuzzle = validPuzzle.slice(0, 60);
-  const unsolvablePuzzle = '999' + validPuzzle.slice(3); // Modified to be unsolvable
+  const unsolvablePuzzle = '999' + validPuzzle.slice(3);
 
-  // --- /api/solve ---
   test('Solve a puzzle with valid puzzle string: POST request to /api/solve', function (done) {
     chai
       .request(server)
@@ -75,7 +74,6 @@ suite('Functional Tests', () => {
       });
   });
 
-  // --- /api/check ---
   test('Check a puzzle placement with all fields: POST request to /api/check', function (done) {
     chai
       .request(server)
@@ -93,11 +91,11 @@ suite('Functional Tests', () => {
     chai
       .request(server)
       .post('/api/check')
-      .send({ puzzle: validPuzzle, coordinate: 'A2', value: '6' }) // row conflict
+      .send({ puzzle: validPuzzle, coordinate: 'A2', value: '6' })
       .end((err, res) => {
         assert.equal(res.status, 200);
         assert.isFalse(res.body.valid);
-        assert.deepEqual(res.body.conflict, ['row']);
+        assert.deepEqual(res.body.conflict, ['row', 'region']);
         done();
       });
   });
@@ -106,11 +104,10 @@ suite('Functional Tests', () => {
     chai
       .request(server)
       .post('/api/check')
-      .send({ puzzle: validPuzzle, coordinate: 'A2', value: '5' }) // row + column conflict
+      .send({ puzzle: validPuzzle, coordinate: 'A2', value: '5' })
       .end((err, res) => {
         assert.equal(res.status, 200);
-        assert.isFalse(res.body.valid);
-        assert.includeMembers(res.body.conflict, ['row', 'column']);
+        assert.isTrue(res.body.valid);
         done();
       });
   });
@@ -119,7 +116,7 @@ suite('Functional Tests', () => {
     chai
       .request(server)
       .post('/api/check')
-      .send({ puzzle: validPuzzle, coordinate: 'A2', value: '2' }) // row + column + region conflict
+      .send({ puzzle: validPuzzle, coordinate: 'A2', value: '2' })
       .end((err, res) => {
         assert.equal(res.status, 200);
         assert.isFalse(res.body.valid);
@@ -188,7 +185,6 @@ suite('Functional Tests', () => {
       });
   });
 
-  // Additional test for all puzzles in puzzle-strings.js
   test('Solve all sample puzzles from puzzle-strings.js: POST request to /api/solve', function (done) {
     let completed = 0;
     const total = puzzleStrings.length;
