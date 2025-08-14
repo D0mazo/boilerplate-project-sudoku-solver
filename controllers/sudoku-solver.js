@@ -19,12 +19,12 @@ class SudokuSolver {
   }
 
   stringToBoard(puzzleString) {
-    const board = [];
-    for (let i = 0; i < 81; i += 9) {
-      board.push(puzzleString.slice(i, i + 9).split(''));
-    }
-    return board;
+  const board = [];
+  for (let i = 0; i < 81; i += 9) {
+    board.push(puzzleString.slice(i, i + 9).split(''));
   }
+  return board;
+}
 
   boardToString(board) {
     return board.map(r => r.join('')).join('');
@@ -37,14 +37,20 @@ class SudokuSolver {
     return board[rowIndex].every((cell, idx) => idx === colIndex || cell !== value);
   }
 
-  checkColPlacement(puzzleString, row, column, value) {
-    const colIndex = Number(column) - 1;
-    const board = this.stringToBoard(puzzleString);
-    for (let i = 0; i < 9; i++) {
-      if (board[i][colIndex] === value) return false;
+ checkColPlacement(puzzleString, row, column, value) {
+  const rowIndex = this.rowLetterToIndex(row);
+  const colIndex = Number(column) - 1;
+  const board = this.stringToBoard(puzzleString);
+  console.log(`Checking column ${colIndex} for value ${value}, excluding row ${rowIndex}`);
+  console.log(`Column values: ${board.map(row => row[colIndex]).join(',')}`);
+  for (let r = 0; r < 9; r++) {
+    if (r !== rowIndex && board[r][colIndex] === value) {
+      console.log(`Conflict found at row ${r}, col ${colIndex}: ${value}`);
+      return false;
     }
-    return true;
   }
+  return true;
+}
 
   checkRegionPlacement(puzzleString, row, column, value) {
     const rowIndex = this.rowLetterToIndex(row);

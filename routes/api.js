@@ -7,6 +7,7 @@ module.exports = function (app) {
 
   app.route('/api/check').post((req, res) => {
     const { puzzle, coordinate, value } = req.body;
+    console.log(`Received: coordinate=${coordinate}, value=${value}, row=${coordinate[0]}, column=${coordinate[1]}, colIndex=${Number(coordinate[1]) - 1}`);
 
     if (!puzzle || !coordinate || !value) {
       return res.json({ error: 'Required field(s) missing' });

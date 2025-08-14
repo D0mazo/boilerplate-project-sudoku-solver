@@ -88,26 +88,27 @@ suite('Functional Tests', () => {
   });
 
   test('Check a puzzle placement with single placement conflict: POST request to /api/check', function (done) {
-    chai
-      .request(server)
-      .post('/api/check')
-      .send({ puzzle: validPuzzle, coordinate: 'A2', value: '6' })
-      .end((err, res) => {
-        assert.equal(res.status, 200);
-        assert.isFalse(res.body.valid);
-        assert.deepEqual(res.body.conflict, ['row', 'region']);
-        done();
-      });
-  });
+  chai
+    .request(server)
+    .post('/api/check')
+    .send({ puzzle: validPuzzle, coordinate: 'A1', value: '6' })
+    .end((err, res) => {
+      assert.equal(res.status, 200);
+      assert.isFalse(res.body.valid);
+      assert.deepEqual(res.body.conflict, ['region']);
+      done();
+    });
+});
 
   test('Check a puzzle placement with multiple placement conflicts: POST request to /api/check', function (done) {
     chai
       .request(server)
       .post('/api/check')
-      .send({ puzzle: validPuzzle, coordinate: 'A2', value: '5' })
+      .send({ puzzle: validPuzzle, coordinate: 'A2', value: '2' })
       .end((err, res) => {
         assert.equal(res.status, 200);
-        assert.isTrue(res.body.valid);
+        assert.isFalse(res.body.valid);
+        assert.includeMembers(res.body.conflict, ['row', 'column', 'region']);
         done();
       });
   });

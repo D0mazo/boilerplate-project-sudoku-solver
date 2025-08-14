@@ -45,7 +45,7 @@ suite('Unit Tests', () => {
   });
 
   test('Logic handles an invalid column placement', () => {
-    assert.isFalse(solver.checkColPlacement(validPuzzle, 'A', 2, '5'));
+    assert.isFalse(solver.checkColPlacement(validPuzzle, 'A', 2, '2'));
   });
 
   test('Logic handles a valid region (3x3 grid) placement', () => {
@@ -71,7 +71,6 @@ suite('Unit Tests', () => {
     assert.equal(result.solution, solvedPuzzle);
   });
 
-  // Additional test for all puzzles in puzzle-strings.js
   test('Solver correctly solves all sample puzzles from puzzle-strings.js', () => {
     puzzleStrings.forEach(([puzzle, solution], index) => {
       const result = solver.solve(puzzle);
