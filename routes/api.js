@@ -31,6 +31,14 @@ module.exports = function (app) {
 
     const row = coordinate[0];
     const column = coordinate[1];
+    const board = solver.stringToBoard(puzzle);
+    const rowIndex = solver.rowLetterToIndex(row);
+    const colIndex = Number(column) - 1;
+
+    // ✅ Requirement #9: If value already exists at that coordinate, it's valid
+    if (board[rowIndex][colIndex] === value) {
+      return res.json({ valid: true });
+    }
 
     const conflicts = [];
     if (!solver.checkRowPlacement(puzzle, row, column, value)) {
